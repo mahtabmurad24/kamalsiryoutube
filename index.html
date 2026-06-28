@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kamal Sir Academy - YouTube Embed Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .title-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .input-focus:focus {
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+            border-color: #3B82F6;
+        }
+
+        .preview-container {
+            aspect-ratio: 16 / 9;
+            background: #111827;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+        }
+
+        /* Mobile improvements */
+        @media (max-width: 640px) {
+            .title-font {
+                font-size: 2.25rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-5">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="image/logo.png" 
+                         alt="Kamal Sir Academy Logo" 
+                         class="w-10 h-10 sm:w-11 sm:h-11 object-contain rounded-2xl">
+                    <div>
+                        <h1 class="title-font text-2xl sm:text-3xl font-semibold tracking-tighter">Kamal Sir Academy</h1>
+                        <p class="text-xs sm:text-sm text-gray-500 -mt-1">YouTube Embed Generator</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <!-- Hero -->
+        <div class="text-center mb-10 sm:mb-12">
+            <h2 class="text-3xl sm:text-5xl font-semibold title-font tracking-tighter mb-4 px-2">
+                Convert YouTube Links to <span class="text-[#3B82F6]">Embed</span> Links
+            </h2>
+            <p class="text-gray-600 max-w-md mx-auto px-2">Works with timestamps, shorts &amp; all formats</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+            <!-- Input Card -->
+            <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <i class="fa-solid fa-link text-[#3B82F6] text-2xl"></i>
+                    <h3 class="text-xl sm:text-2xl font-semibold">Paste YouTube Link</h3>
+                </div>
+                
+                <input id="youtubeInput" 
+                       type="text" 
+                       placeholder="https://www.youtube.com/watch?v=1dgZ9O0Py8c&t=466s"
+                       class="input-focus w-full px-5 py-4 sm:py-5 text-base border border-gray-300 rounded-2xl focus:outline-none text-gray-800">
+
+                <button onclick="convertLink()" 
+                        class="w-full mt-8 bg-[#3B82F6] hover:bg-blue-600 active:bg-blue-700 transition-all text-white font-semibold py-4 sm:py-5 rounded-2xl text-base sm:text-lg flex items-center justify-center gap-3 shadow-lg">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>GENERATE EMBED LINK</span>
+                </button>
+            </div>
+
+            <!-- Output Card -->
+            <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 flex flex-col">
+                <div class="flex items-center gap-3 mb-6">
+                    <i class="fa-solid fa-code text-[#3B82F6] text-2xl"></i>
+                    <h3 class="text-xl sm:text-2xl font-semibold">Embed Link</h3>
+                </div>
+                
+                <div class="relative flex-1">
+                    <input id="embedOutput" 
+                           type="text" 
+                           readonly
+                           class="w-full px-5 py-4 sm:py-5 text-sm border border-gray-300 rounded-2xl bg-gray-50 font-mono">
+                    <button onclick="copyEmbed()" 
+                            class="absolute right-3 top-1/2 -translate-y-1/2 bg-white border hover:border-[#3B82F6] px-5 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-copy"></i>
+                        <span class="hidden sm:inline">COPY</span>
+                    </button>
+                </div>
+
+                <!-- Preview -->
+                <div class="mt-8">
+                    <p class="text-sm font-medium text-gray-500 mb-3">Live Preview</p>
+                    <div id="previewContainer" class="preview-container">
+                        <div id="previewContent" class="w-full h-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works -->
+        <div class="mt-16 sm:mt-20">
+            <h2 class="text-3xl sm:text-4xl font-semibold title-font text-center mb-4">How It Works</h2>
+            <p class="text-center text-gray-600 mb-10 sm:mb-12 px-4">Four simple steps to generate your embed link</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <!-- Step Cards -->
+                <div class="bg-white rounded-3xl p-6 border border-gray-100">
+                    <div class="flex items-start gap-5">
+                        <div class="step-number w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center text-white font-bold text-lg sm:text-xl flex-shrink-0">1</div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-lg mb-2">🔗 Copy your YouTube link</h4>
+                            <p class="text-gray-600 text-sm sm:text-base">
+                                Copy from address bar or Share button on mobile.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 border border-gray-100">
+                    <div class="flex items-start gap-5">
+                        <div class="step-number w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center text-white font-bold text-lg sm:text-xl flex-shrink-0">2</div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-lg mb-2">📋 Paste &amp; Convert</h4>
+                            <p class="text-gray-600 text-sm sm:text-base">
+                                Paste link and click Generate.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 border border-gray-100">
+                    <div class="flex items-start gap-5">
+                        <div class="step-number w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center text-white font-bold text-lg sm:text-xl flex-shrink-0">3</div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-lg mb-2">▶️ Live Preview</h4>
+                            <p class="text-gray-600 text-sm sm:text-base">
+                                Watch exactly how it will appear on your site.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 border border-gray-100">
+                    <div class="flex items-start gap-5">
+                        <div class="step-number w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center text-white font-bold text-lg sm:text-xl flex-shrink-0">4</div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-lg mb-2">🚀 Copy &amp; Embed</h4>
+                            <p class="text-gray-600 text-sm sm:text-base mb-3">
+                                Copy and paste into your website:
+                            </p>
+                            <div class="bg-gray-900 text-[10px] sm:text-xs text-gray-300 p-3 rounded-2xl font-mono overflow-x-auto">
+                                &lt;iframe src="https://www.youtube.com/embed/VIDEO_ID" width="100%" height="360" allowfullscreen&gt;&lt;/iframe&gt;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-900 text-gray-400 py-8 text-center text-sm">
+        <p>Built for Kamal Sir Academy • Free YouTube Embed Tool</p>
+    </footer>
+
+    <script>
+        function extractVideoId(url) {
+            if (!url) return null;
+            url = url.trim();
+
+            const patterns = [
+                /youtu\.be\/([a-zA-Z0-9_-]+)/i,
+                /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]+)/i,
+                /youtube\.com\/embed\/([a-zA-Z0-9_-]+)/i,
+                /youtube\.com\/live\/([a-zA-Z0-9_-]+)/i,
+                /youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/i,
+            ];
+
+            for (let pattern of patterns) {
+                const match = url.match(pattern);
+                if (match && match[1]) return match[1];
+            }
+
+            const vParam = url.match(/[?&]v=([a-zA-Z0-9_-]+)/i);
+            if (vParam && vParam[1]) return vParam[1];
+
+            if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
+
+            return null;
+        }
+
+        function convertLink() {
+            const input = document.getElementById('youtubeInput').value.trim();
+            const outputField = document.getElementById('embedOutput');
+            const previewContent = document.getElementById('previewContent');
+
+            if (!input) {
+                alert("Please enter a YouTube link!");
+                return;
+            }
+
+            const videoId = extractVideoId(input);
+
+            if (!videoId) {
+                alert("Could not extract video ID. Please check the link.");
+                return;
+            }
+
+            const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+            outputField.value = embedUrl;
+
+            previewContent.innerHTML = `
+                <iframe 
+                    width="100%" 
+                    height="100%" 
+                    src="${embedUrl}" 
+                    title="YouTube video player" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    allowfullscreen>
+                </iframe>
+            `;
+        }
+
+        function copyEmbed() {
+            const output = document.getElementById('embedOutput').value;
+            if (!output) {
+                alert("No link to copy!");
+                return;
+            }
+
+            navigator.clipboard.writeText(output).then(() => {
+                const btn = event.currentTarget;
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = `<i class="fa-solid fa-check text-green-600"></i> COPIED`;
+                setTimeout(() => btn.innerHTML = originalHTML, 2000);
+            });
+        }
+
+        // Enter key support
+        document.getElementById('youtubeInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') convertLink();
+        });
+    </script>
+</body>
+</html>
